@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="multi"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Chess Pattern 3x3</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100dvh;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 6px 8px;
+            justify-content: space-between;
+        }
+
+        /* ── Plateaux ── */
+        .board-wrap {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, min(27vw, 22vh));
+            grid-template-rows:    repeat(3, min(27vw, 22vh));
+            border: 4px solid #2c3e50;
+            border-radius: 4px;
+            background-color: #34495e;
+        }
+
+        #target-board {
+            border-color: #16a085;
+            cursor: default;
+        }
+        #target-board.active {
+            cursor: pointer;
+            border-color: #e67e22;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: min(18vw, 14vh);
+            user-select: none;
+            line-height: 0;
+            position: relative;
+        }
+
+        #source-board .cell:nth-child(even) { background-color: #ecf0f1; }
+        #source-board .cell:nth-child(odd)  { background-color: #bdc3c7; }
+        #target-board  .cell:nth-child(even) { background-color: #ecf0f1; }
+        #target-board  .cell:nth-child(odd)  { background-color: #bdc3c7; }
+
+        /* Hint overlay sur les cases target (visible seulement quand actif) */
+        #target-board.active .cell::after {
+            content: attr(data-hint);
+            position: absolute;
+            font-size: min(3vw, 2.2vh);
+            color: rgba(0,0,0,0.25);
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        /* ── Labels ── */
+        .board-label {
+            font-weight: bold;
+            font-size: clamp(10px, 2.6vw, 13px);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 3px 0;
+        }
+        #label-source {
+            color: #2c3e50;
+            text-align: left;
+        }
+        #label-target {
+            color: #16a085;
+            text-align: right;
+        }
+
+        /* ── Bande centrale ── */
+        .middle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 4px;
+            gap: 8px;
+        }
+
+        #action-btn {
+            flex-shrink: 0;
+            padding: 10px 24px;
+            font-size: clamp(15px, 4.5vw, 20px);
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            transition: transform 0.1s, background-color 0.2s;
+            white-space: nowrap;
+        }
+        #action-btn:active { transform: scale(0.95); }
+        #action-btn.suivant { background-color: #2980b9; }
+
+        #timer-display {
+            font-size: clamp(20px, 7vw, 32px);
+            font-weight: bold;
+            color: #bdc3c7;
+            letter-spacing: 1px;
+            min-width: 4ch;
+            text-align: right;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        #timer-display.running { color: #27ae60; }
+        #timer-display.warning { color: #e67e22; }
+        #timer-display.danger  { color: #e74c3c; }
+
+        /* ── Alerte ── */
+        #alert-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(231,76,60,0.93);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        #alert-overlay.visible { display: flex; }
+        #alert-overlay span { font-size: clamp(40px, 15vw, 80px); }
+        #alert-overlay p {
+            color: white;
+            font-size: clamp(18px, 5vw, 28px);
+            font-weight: bold;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #dismiss-btn {
+            padding: 12px 36px;
+            font-size: clamp(15px, 4vw, 20px);
+            font-weight: bold;
+            background: white;
+            color: #e74c3c;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SOURCE -->
+    <div class="board-wrap">
+        <div class="board-label" id="label-source">Position actuelle</div>
+        <div id="source-board" class="board"></div>
+    </div>
+
+    <!-- Bande centrale -->
+    <div class="middle">
+        <div id="timer-display">—</div>
+        <button id="action-btn">Trouvé !</button>
+        <div style="min-width:4ch"></div><!-- équilibre visuel -->
+    </div>
+
+    <!-- TARGET -->
+    <div class="board-wrap">
+        <div id="target-board" class="board"></div>
+        <div class="board-label" id="label-target">Objectif</div>
+    </div>
+
+</div>
+
+<!-- Alerte fin de chrono -->
+<div id="alert-overlay">
+    <span>⏰</span>
+    <p>Temps écoulé !</p>
+    <button id="dismiss-btn">OK</button>
+</div>
+
+<script>
+    const PIECES = { roi:'♔', dame:'♕', tour:'♖', fou:'♗', cheval:'♘' };
+
+    // États
+    let sourceState    = [];
+    let targetState    = [];
+    let targetOriginal = [];
+
+    // Phase : 'idle' = en attente d'annonce | 'running' = chrono lancé
+    let phase = 'idle';
+
+    // ── Timer ──────────────────────────────────────────────────────────────
+    let timerInterval = null;
+    const TIMER_DURATION = 60;
+    const timerEl = document.getElementById('timer-display');
+
+    function updateTimerDisplay(s) {
+        const m   = Math.floor(s / 60);
+        const sec = s % 60;
+        timerEl.textContent = m + ':' + String(sec).padStart(2, '0');
+        timerEl.className   = s <= 10 ? 'danger' : s <= 20 ? 'warning' : 'running';
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        let s = TIMER_DURATION;
+        updateTimerDisplay(s);
+        timerInterval = setInterval(() => {
+            s--;
+            updateTimerDisplay(s);
+            if (s <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                showAlert();
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        timerEl.textContent = '—';
+        timerEl.className   = '';
+    }
+
+    function showAlert() {
+        if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 400]);
+        document.getElementById('alert-overlay').classList.add('visible');
+    }
+
+    document.getElementById('dismiss-btn').addEventListener('click', () => {
+        document.getElementById('alert-overlay').classList.remove('visible');
+        // On reste en phase running : le joueur peut encore tenter
+    });
+
+    // ── Génération ─────────────────────────────────────────────────────────
+    function generateBoard() {
+        let board = Array(9).fill(null);
+        const all = [0,1,2,3,4,5,6,7,8];
+        const bishopPos = [0,2,4,6,8][Math.floor(Math.random() * 5)];
+        board[bishopPos] = PIECES.fou;
+        const knightCand = all.filter(i => i !== 4 && board[i] === null);
+        board[knightCand[Math.floor(Math.random() * knightCand.length)]] = PIECES.cheval;
+        const rest    = [PIECES.roi, PIECES.dame, PIECES.tour];
+        const freeIdx = all.filter(i => board[i] === null).sort(() => Math.random() - 0.5);
+        for (let i = 0; i < 3; i++) board[freeIdx[i]] = rest[i];
+        return board;
+    }
+
+    // ── Transformations ────────────────────────────────────────────────────
+    function rotate90CW(b) {
+        const out = Array(9).fill(null);
+        for (let r = 0; r < 3; r++)
+            for (let c = 0; c < 3; c++)
+                out[c * 3 + (2 - r)] = b[r * 3 + c];
+        return out;
+    }
+    function rotate90CCW(b) { return rotate90CW(rotate90CW(rotate90CW(b))); }
+    function flipH(b) {
+        const out = Array(9).fill(null);
+        for (let r = 0; r < 3; r++)
+            for (let c = 0; c < 3; c++)
+                out[(2 - r) * 3 + c] = b[r * 3 + c];
+        return out;
+    }
+    function flipV(b) {
+        const out = Array(9).fill(null);
+        for (let r = 0; r < 3; r++)
+            for (let c = 0; c < 3; c++)
+                out[r * 3 + (2 - c)] = b[r * 3 + c];
+        return out;
+    }
+
+    function isBishopValid(board) {
+        const dark = [0,2,4,6,8];
+        const i = board.indexOf(PIECES.fou);
+        return i === -1 || dark.includes(i);
+    }
+
+    // ── Hints par case (visibles quand actif) ─────────────────────────────
+    // Index :  0=coin-HG  1=milieu-H   2=coin-HD
+    //          3=milieu-G  4=centre    5=milieu-D
+    //          6=coin-BG  7=milieu-B   8=coin-BD
+    const HINTS = [
+        '↻',   // 0 coin HG  → rotation horaire
+        '↕',   // 1 milieu H → flip vertical
+        '↺',   // 2 coin HD  → rotation anti-horaire
+        '↔',   // 3 milieu G → flip horizontal
+        '⟳',   // 4 centre   → reset
+        '↔',   // 5 milieu D → flip horizontal
+        '↻',   // 6 coin BG  → rotation horaire (symétrie avec 0)
+        '↕',   // 7 milieu B → flip vertical
+        '↺',   // 8 coin BD  → rotation anti-horaire (symétrie avec 2)
+    ];
+
+    // ── Rendu ──────────────────────────────────────────────────────────────
+    function renderBoard(el, data) {
+        el.innerHTML = '';
+        const isTarget = el.id === 'target-board';
+        if (isTarget) {
+            el.style.borderColor = (phase === 'running' && !isBishopValid(data))
+                ? '#e74c3c' : '';
+        }
+        data.forEach((piece, idx) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.textContent = piece || '';
+            if (isTarget) cell.setAttribute('data-hint', HINTS[idx]);
+            el.appendChild(cell);
+        });
+    }
+
+    const sourceBoardEl = document.getElementById('source-board');
+    const targetBoardEl = document.getElementById('target-board');
+
+    function renderAll() {
+        renderBoard(sourceBoardEl, sourceState);
+        renderBoard(targetBoardEl, targetState);
+    }
+
+    // ── Bouton central ─────────────────────────────────────────────────────
+    const actionBtn = document.getElementById('action-btn');
+
+    actionBtn.addEventListener('click', () => {
+        if (phase === 'idle') {
+            // "Trouvé !" → lancer le chrono, activer le plateau TARGET
+            phase = 'running';
+            actionBtn.textContent = 'Suivant';
+            actionBtn.classList.add('suivant');
+            targetBoardEl.classList.add('active');
+            renderAll(); // pour afficher les hints
+            startTimer();
+        } else {
+            // "Suivant" → passer à la config suivante
+            nextRound();
+        }
+    });
+
+    function nextRound() {
+        stopTimer();
+        phase = 'idle';
+        actionBtn.textContent = 'Trouvé !';
+        actionBtn.classList.remove('suivant');
+        targetBoardEl.classList.remove('active');
+
+        // La target originale devient la nouvelle source
+        sourceState    = [...targetOriginal];
+        const newTarget = generateBoard();
+        targetOriginal  = [...newTarget];
+        targetState     = [...newTarget];
+
+        renderAll();
+    }
+
+    // ── Interactions sur le plateau TARGET ────────────────────────────────
+    targetBoardEl.addEventListener('click', (e) => {
+        if (phase !== 'running') return; // inactif tant que "Trouvé !" n'a pas été cliqué
+
+        const cell = e.target.closest('.cell');
+        if (!cell) return;
+        const idx = [...targetBoardEl.children].indexOf(cell);
+
+        switch (idx) {
+            case 0: case 6: applyTransform(rotate90CW);  break; // coins gauche → horaire
+            case 2: case 8: applyTransform(rotate90CCW); break; // coins droit → anti-horaire
+            case 1: case 7: applyTransform(flipH);       break; // milieu haut/bas → flip vertical (axe H)
+            case 3: case 5: applyTransform(flipV);       break; // milieu gauche/droite → flip horizontal (axe V)
+            case 4:         resetTarget();                break; // centre → reset
+        }
+    });
+
+    function applyTransform(fn) {
+        targetState = fn(targetState);
+        renderBoard(targetBoardEl, targetState);
+    }
+
+    function resetTarget() {
+        targetState = [...targetOriginal];
+        renderBoard(targetBoardEl, targetState);
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    window.onload = () => {
+        sourceState    = generateBoard();
+        const t        = generateBoard();
+        targetOriginal = [...t];
+        targetState    = [...t];
+        renderAll();
+    };
+</script>
+
+</body></html>
