@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="multi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Chess Pattern 3x3</title>
+    <style>
+        /* Reset complet pour gagner de l'espace */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100dvh; /* Utilise la hauteur dynamique du mobile */
+            background-color: #e9ecef;
+            overflow: hidden; /* Empêche tout scroll */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 5px; /* Marge minimale sur les bords */
+            justify-content: space-evenly; /* Répartit l'espace verticalement */
+        }
+
+        .board {
+            display: grid;
+            /* La taille dépend de la largeur OU de la hauteur (la plus petite des deux) */
+            grid-template-columns: repeat(3, min(28vw, 22vh));
+            grid-template-rows: repeat(3, min(28vw, 22vh));
+            border: 4px solid #2c3e50;
+            border-radius: 4px;
+            background-color: #34495e;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Taille de la pièce proportionnelle à la case */
+            font-size: min(18vw, 15vh); 
+            user-select: none;
+            line-height: 0;
+        }
+
+        /* Style Damier */
+        .board .cell:nth-child(even) { background-color: #ecf0f1; }
+        .board .cell:nth-child(odd) { background-color: #bdc3c7; }
+
+        .label {
+            font-weight: bold;
+            font-size: clamp(12px, 3vw, 16px); /* Texte qui s'adapte */
+            color: #7f8c8d;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: clamp(16px, 5vw, 22px);
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- SOURCE (EN HAUT) -->
+    <div class="label">
+        <div class="emoji-indicator">🏁 SOURCE</div>
+    </div>
+    <div id="target-board" class="board"></div>
+
+    <!-- BOUTON DE TRANSFERT -->
+    <button id="action-btn">
+        <span>    NEXT   </span>
+    </button>
+
+    <!-- CIBLE (EN BAS) -->
+    <div id="source-board" class="board"></div>
+    <div class="label">
+        <div class="emoji-indicator">🎯 TARGET</div>
+    </div>
+
+
+</div>
+
+<script>
+    const PIECES = {
+        roi: '♔',
+        dame: '♕',
+        tour: '♖',
+        fou: '♗',
+        cheval: '♘'
+    };
+
+    let sourceState = [];
+    let targetState = [];
+
+    /**
+     * Génère un plateau respectant les 3 règles :
+     * 1. 5 pièces spécifiques.
+     * 2. Fou sur coins (0,2,6,8) ou centre (4).
+     * 3. Cheval JAMAIS au centre (4).
+     */
+    function generateBoard() {
+        let board = Array(9).fill(null);
+        const allIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        
+        // 1. Placer le FOU (Coins: 0,2,6,8 ou Centre: 4)
+        const validBishopPos = [0, 2, 4, 6, 8];
+        const bishopPos = validBishopPos[Math.floor(Math.random() * validBishopPos.length)];
+        board[bishopPos] = PIECES.fou;
+
+        // 2. Placer le CHEVAL (Pas au centre, et pas là où est le fou)
+        let availableForKnight = allIndices.filter(i => i !== 4 && board[i] === null);
+        const knightPos = availableForKnight[Math.floor(Math.random() * availableForKnight.length)];
+        board[knightPos] = PIECES.cheval;
+
+        // 3. Placer Roi, Dame, Tour sur les cases restantes
+        let remainingPieces = [PIECES.roi, PIECES.dame, PIECES.tour];
+        let remainingIndices = allIndices.filter(i => board[i] === null);
+        
+        // Mélange aléatoire des indices restants
+        remainingIndices.sort(() => Math.random() - 0.5);
+        
+        for (let i = 0; i < 3; i++) {
+            board[remainingIndices[i]] = remainingPieces[i];
+        }
+
+        return board;
+    }
+
+    function renderBoard(elementId, boardData) {
+        const boardEl = document.getElementById(elementId);
+        boardEl.innerHTML = '';
+        boardData.forEach(piece => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.textContent = piece || '';
+            boardEl.appendChild(cell);
+        });
+    }
+
+    const actionBtn = document.getElementById('action-btn');
+
+    actionBtn.addEventListener('click', () => {
+        // Logique demandée : 
+        // 1. On copie le bas (source) vers le haut (target)
+        targetState = [...sourceState];
+        
+        // 2. On génère un nouveau plateau aléatoire pour le bas (source)
+        sourceState = generateBoard();
+        
+        // Mise à jour visuelle
+        renderBoard('target-board', targetState);
+        renderBoard('source-board', sourceState);
+    });
+
+    // Initialisation
+    window.onload = () => {
+        sourceState = generateBoard();
+        targetState = generateBoard();
+        
+        renderBoard('target-board', targetState);
+        renderBoard('source-board', sourceState);
+    };
+</script>
+
+</body>
+</html>
