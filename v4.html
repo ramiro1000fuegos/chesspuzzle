@@ -67,14 +67,14 @@
 
         #source-board .cell:nth-child(even) { background-color: #ecf0f1; }
         #source-board .cell:nth-child(odd)  { background-color: #bdc3c7; }
-        #target-board  .cell:nth-child(even) { background-color: #ecf0f1; }
-        #target-board  .cell:nth-child(odd)  { background-color: #bdc3c7; }
+        #target-board .cell:nth-child(even) { background-color: #ecf0f1; }
+        #target-board .cell:nth-child(odd)  { background-color: #bdc3c7; }
 
         /* Hint overlay sur les cases target (visible seulement quand actif) */
         #target-board.active .cell::after {
             content: attr(data-hint);
             position: absolute;
-            font-size: min(3vw, 2.2vh);
+            font-size: min(6vw, 4.4vh);
             color: rgba(0,0,0,0.25);
             font-weight: bold;
             pointer-events: none;
