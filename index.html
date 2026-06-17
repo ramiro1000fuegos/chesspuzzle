@@ -95,9 +95,9 @@
             padding: 3px 0;
 
   position: absolute;
-  right: 100%; 
-  margin-right: 10px;    
-  /*left: -45px;         /* ajuste selon ton visuel */
+  /*right: 100%; 
+  margin-right: 10px; */
+  left: -45px;         /* ajuste selon ton visuel */
   top: 50%;
   transform: translateY(-50%) rotate(-90deg);
   transform-origin: center;
@@ -120,7 +120,7 @@
             padding: 3px 0;
 
   position: absolute;
-  left: -75px;         /* ajuste selon ton visuel */
+  left: -80px;         /* ajuste selon ton visuel */
   top: 50%;
   transform: translateY(-50%) rotate(-90deg);
   transform-origin: center;
@@ -162,6 +162,18 @@
         #action-btn:active { transform: scale(0.95); }
         #action-btn.suivant { background-color: #2980b9; }
 
+        #timer-display2 {
+            font-size: clamp(20px, 7vw, 32px);
+            font-weight: bold;
+            color: #bdc3c7;
+            letter-spacing: 1px;
+            min-width: 4ch;
+            text-align: right;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+
+		
         #timer-display {
             font-size: clamp(20px, 7vw, 32px);
             font-weight: bold;
@@ -223,6 +235,7 @@
     <div class="middle">
         <div id="timer-display"></div>
         <button id="action-btn">Trouvé !</button>
+		<div id="timer-display2"></div>
     </div>
 
     <!-- TARGET -->
