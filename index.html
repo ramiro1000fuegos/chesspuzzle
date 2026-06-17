@@ -33,14 +33,15 @@
         /* ── Plateaux ── */
         .board-wrap {
             position: relative;
-            display: flex;
-            flex-direction: column;
+  display: block; /* ou block selon ton layout */
+/*            display: flex;
+            flex-direction: column;*/
         }
 
         .board {
             display: grid;
-            grid-template-columns: repeat(3, min(29vw, 13vh));
-            grid-template-rows:    repeat(3, min(29vw, 13vh));
+            grid-template-columns: repeat(3, min(22vw, 17vh));
+            grid-template-rows:    repeat(3, min(22vw, 17vh));
             border: 4px solid #2c3e50;
             border-radius: 4px;
             background-color: #34495e;
@@ -84,21 +85,51 @@
             pointer-events: none;
         }
 
+
         /* ── Labels ── */
-        .board-label {
+        .board-label2 {
             font-weight: bold;
             font-size: clamp(10px, 2.6vw, 13px);
             text-transform: uppercase;
             letter-spacing: 0.06em;
             padding: 3px 0;
+
+  position: absolute;
+  left: -45px;         /* ajuste selon ton visuel */
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap; /* évite retour à la ligne */
+
         }
         #label-source {
             color: #2c3e50;
-            text-align: left;
         }
         #label-target {
             color: #16a085;
-            text-align: right;
+        }
+
+        /* ── Labels ── */
+        .board-label1 {
+            font-weight: bold;
+            font-size: clamp(10px, 2.6vw, 13px);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 3px 0;
+
+  position: absolute;
+  left: -82px;         /* ajuste selon ton visuel */
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap; /* évite retour à la ligne */
+
+        }
+        #label-source {
+            color: #2c3e50;
+        }
+        #label-target {
+            color: #16a085;
         }
 
         /* ── Bande centrale ── */
@@ -182,21 +213,20 @@
 
     <!-- SOURCE -->
     <div class="board-wrap">
-        <div class="board-label" id="label-source">Position actuelle</div>
         <div id="source-board" class="board"></div>
+        <div class="board-label1" id="label-source">Position actuelle</div>
     </div>
 
     <!-- Bande centrale -->
     <div class="middle">
         <div id="timer-display"></div>
         <button id="action-btn">Trouvé !</button>
-<!--        <div style="min-width:4ch"></div> équilibre visuel -->
     </div>
 
     <!-- TARGET -->
     <div class="board-wrap">
         <div id="target-board" class="board"></div>
-        <div class="board-label" id="label-target">Objectif</div>
+        <div class="board-label2" id="label-target">Objectif</div>
     </div>
 
 </div>
@@ -248,7 +278,7 @@
 
     function stopTimer() {
         if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-        timerEl.textContent = '';
+        timerEl.textContent = '—';
         timerEl.className   = '';
     }
 
@@ -315,7 +345,7 @@
         '↕',   // 1 milieu H → flip vertical
         '↺',   // 2 coin HD  → rotation anti-horaire
         '↔',   // 3 milieu G → flip horizontal
-        '✖',   // 4 centre   → reset
+        '⟳',   // 4 centre   → reset
         '↔',   // 5 milieu D → flip horizontal
         '↻',   // 6 coin BG  → rotation horaire (symétrie avec 0)
         '↕',   // 7 milieu B → flip vertical
