@@ -39,8 +39,8 @@
 
         .board {
             display: grid;
-            grid-template-columns: repeat(3, min(27vw, 22vh));
-            grid-template-rows:    repeat(3, min(27vw, 22vh));
+            grid-template-columns: repeat(3, min(22vw, 17vh));
+            grid-template-rows:    repeat(3, min(22vw, 17vh));
             border: 4px solid #2c3e50;
             border-radius: 4px;
             background-color: #34495e;
@@ -74,6 +74,10 @@
         #target-board.active .cell::after {
             content: attr(data-hint);
             position: absolute;
+
+ 		top: 22px;
+	      left: 6px;
+
             font-size: min(6vw, 4.4vh);
             color: rgba(0,0,0,0.25);
             font-weight: bold;
