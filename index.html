@@ -111,6 +111,24 @@
             color: #2c3e50;
         }
 
+        .board-label {
+            font-weight: bold;
+            font-size: clamp(13px, 3.5vw, 17px);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 3px 0;
+  			white-space: nowrap; 
+        }
+        #label-source {
+            color: #2c3e50;
+        }
+        #label-target {
+            color: #2c3e50;
+        }
+
+		
+		board-label
+		
         /* ── Labels ── */
         .board-label1 {
             font-weight: bold;
@@ -228,20 +246,21 @@
     <!-- SOURCE -->
     <div class="board-wrap">
         <div id="source-board" class="board"></div>
-        <div class="board-label1" id="label-source">Position actuelle</div>
     </div>
 
     <!-- Bande centrale -->
     <div class="middle">
         <div id="timer-display"></div>
         <button id="action-btn">Trouvé !</button>
-		<div id="timer-display2"></div>
+		<div id="timer-display2">
+			<div class="board-label" id="label-source">Position de départ</div>
+			<div class="board-label" id="label-target">Position d'arrivée</div>
+		</div>
     </div>
 
     <!-- TARGET -->
     <div class="board-wrap">
         <div id="target-board" class="board"></div>
-        <div class="board-label2" id="label-target">Objectif</div>
     </div>
 
 </div>
