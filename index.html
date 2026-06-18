@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Chess Pattern 3x3</title>
+    <title>Chess Puzzle</title>
+
+
+<!--#####################################################################################################-->
+<!-- STYLE -->
+<!--#####################################################################################################-->	
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -236,6 +241,11 @@
         }
     </style>
 </head>
+
+<!--#####################################################################################################-->
+<!-- HTML -->
+<!--#####################################################################################################-->	
+
 <body>
 
 <div class="container">
@@ -250,8 +260,8 @@
         <div id="timer-display"></div>
         <button id="action-btn">Trouvé !</button>
 		<div id="timer-display2">
-			<div class="board-label text-right" id="label-source">▲ Départ</div>
-			<div class="board-label text-right" id="label-target">▼ Arrivée</div>
+			<div class="board-label ml-4 text-left" id="label-source">▲ Départ</div>
+			<div class="board-label ml-4 text-left" id="label-target">▼ Arrivée</div>
 		</div>
     </div>
 
@@ -268,6 +278,11 @@
     <p>Temps écoulé !</p>
     <button id="dismiss-btn">OK</button>
 </div>
+
+<!--#####################################################################################################-->
+<!-- JAVASCRIPT -->
+<!--#####################################################################################################-->	
+	
 
 <script>
     const PIECES = { roi:'♔', dame:'♕', tour:'♖', fou:'♗', cheval:'♘' };
@@ -376,7 +391,7 @@
         '↕',   // 1 milieu H → flip vertical
         '↺',   // 2 coin HD  → rotation anti-horaire
         '↔',   // 3 milieu G → flip horizontal
-        '❌',   // 4 centre   → reset
+        'X',   // 4 centre   → reset
         '↔',   // 5 milieu D → flip horizontal
         '↻',   // 6 coin BG  → rotation horaire (symétrie avec 0)
         '↕',   // 7 milieu B → flip vertical
