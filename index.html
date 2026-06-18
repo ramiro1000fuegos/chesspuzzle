@@ -95,7 +95,7 @@
         .board-label2 {
             font-weight: bold;
             font-size: clamp(13px, 3.5vw, 17px);
-            text-transform: uppercase;
+            text-transform: uppercase;ml-4 
             letter-spacing: 0.06em;
             padding: 3px 0;
 
@@ -186,10 +186,10 @@
         #action-btn.suivant { background-color: #2980b9; }
 
         #timer-display2 {
-		    width: 100%;          /* Obliga al contenedor a usar todo el ancho */
+		    width: min(28vw, 15vh);          /* Obliga al contenedor a usar todo el ancho */
     		display: flex;        /* Activamos flexbox */
     		flex-direction: column; /* Ponemos una etiqueta sobre la otra */
-    		align-items: flex-end;  /* ¡Aquí ocurre la magia! Empuja todo a la derecha */
+    		/*align-items: flex-end;  /* ¡Aquí ocurre la magia! Empuja todo a la derecha */
     		margin-top: 5px;      /* Espacio opcional con el botón */
 		}
 			
@@ -199,7 +199,7 @@
             font-weight: bold;
             color: #bdc3c7;
             letter-spacing: 1px;
-            min-width: 4ch;
+            width: min(28vw, 15vh);
             text-align: right;
             white-space: nowrap;
             transition: color 0.3s;
