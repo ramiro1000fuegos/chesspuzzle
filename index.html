@@ -16,29 +16,37 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            width: 100dw; height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100dvh;
             background-color: #e9ecef;
             overflow: hidden;
         }
 
         .container {
-            display: flex; flex-direction: column; align-items: center;
-            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
             padding: 6px 8px;
             justify-content: space-between;
         }
 
+        /* ── Plateaux ── */
         .board-wrap {
             position: relative;
-  			display: block; 
+  display: block; /* ou block selon ton layout */
+/*            display: flex;
+            flex-direction: column;*/
         }
 
         .board {
             display: grid;
-            grid-template-columns: repeat(3, min(27.5vw, 14.5vh));
-            grid-template-rows:    repeat(3, min(27.5vw, 14.5vh));
+            grid-template-columns: repeat(3, min(28vw, 15vh));
+            grid-template-rows:    repeat(3, min(28vw, 15vh));
             border: 4px solid #2c3e50;
             border-radius: 4px;
             background-color: #34495e;
@@ -50,13 +58,17 @@
         }
         #target-board.active {
             cursor: pointer;
-            border-color: #2c3e50;
+            border-color: #e67e22;
         }
 
         .cell {
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: min(18vw, 14vh);
-            user-select: none; line-height: 0; position: relative;
+            user-select: none;
+            line-height: 0;
+            position: relative;
         }
 
         #source-board .cell:nth-child(even) { background-color: #ecf0f1; }
@@ -67,9 +79,42 @@
         /* Hint overlay sur les cases target (visible seulement quand actif) */
         #target-board.active .cell::after {
             content: attr(data-hint);
-            position: absolute; top: 22px; left: 6px;
-            font-size: min(6vw, 4.4vh); color: rgba(0,0,0,0.25); ont-weight: bold;
+            position: absolute;
+
+ 		top: 22px;
+	      left: 6px;
+
+            font-size: min(6vw, 4.4vh);
+            color: rgba(0,0,0,0.25);
+            font-weight: bold;
             pointer-events: none;
+        }
+
+
+        /* ── Labels ── */
+        .board-label2 {
+            font-weight: bold;
+            font-size: clamp(13px, 3.5vw, 17px);
+            text-transform: uppercase;
+            text-transform: uppercase;ml-4 
+            letter-spacing: 0.06em;
+            padding: 3px 0;
+
+  position: absolute;
+  right: 100%; 
+  /*margin-right: 10px; 
+  left: -45px;         /* ajuste selon ton visuel */
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap; /* évite retour à la ligne */
+
+        }
+        #label-source {
+            color: #2c3e50;
+        }
+        #label-target {
+            color: #2c3e50;
         }
 
         .board-label {
@@ -80,32 +125,61 @@
             padding: 3px 0;
   			white-space: nowrap; 
         }
-        #label-source { color: #2c3e50; }
-        #label-target { color: #2c3e50; }
-		
+        #label-source {
+            color: #2c3e50;
+        }
+        #label-target {
+            color: #2c3e50;
+        }
+
+
 		board-label
-		
+
+        /* ── Labels ── */
+        .board-label1 {
+            font-weight: bold;
+            font-size: clamp(13px, 3.5vw, 17px);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 3px 0;
+
+  position: absolute;
+  left: -84px;         /* ajuste selon ton visuel */
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap; /* évite retour à la ligne */
+
+        }
+        #label-source {
+            color: #2c3e50;
+        }
+        #label-target {
+            color: #2c3e50;
+        }
+
         /* ── Bande centrale ── */
         .middle {
             display: flex;
-			flex-direction: row;
             align-items: center;
             justify-content: center;
             width: 100%;
             padding: 0 4px;
             gap: 8px;
-			margin: 5px;
+		margin: 10px;
         }
 
         #action-btn {
-			width:  min(27vw, 14vh);
-            flex-shrink: 0; 
-            padding: 10px 24px; margin: 5px 10px;
+            flex-shrink: 0;
+            padding: 10px 24px;
             font-size: clamp(15px, 4.5vw, 20px);
             font-weight: bold;
             cursor: pointer;
-            background-color: #27ae60; color: white;
-            border: none; border-radius: 50px; box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
             transition: transform 0.1s, background-color 0.2s;
             white-space: nowrap;
         }
@@ -113,17 +187,22 @@
         #action-btn.suivant { background-color: #2980b9; }
 
         #timer-display2 {
-		    width:  min(27vw, 14vh);
+		    width: 100%;          /* Obliga al contenedor a usar todo el ancho */
+		    width: min(28vw, 15vh);          /* Obliga al contenedor a usar todo el ancho */
     		display: flex;        /* Activamos flexbox */
     		flex-direction: column; /* Ponemos una etiqueta sobre la otra */
+    		align-items: flex-end;  /* ¡Aquí ocurre la magia! Empuja todo a la derecha */
+    		/*align-items: flex-end;  /* ¡Aquí ocurre la magia! Empuja todo a la derecha */
+    		margin-top: 5px;      /* Espacio opcional con el botón */
 		}
-		
+
+
         #timer-display {
-		    width:  min(27vw, 14vh);
             font-size: clamp(20px, 7vw, 32px);
             font-weight: bold;
             color: #bdc3c7;
             letter-spacing: 1px;
+            min-width: 4ch;
             width: min(28vw, 15vh);
             text-align: right;
             white-space: nowrap;
@@ -207,7 +286,7 @@
 <!--#####################################################################################################-->
 <!-- JAVASCRIPT -->
 <!--#####################################################################################################-->	
-	
+
 
 <script>
     const PIECES = { roi:'♔', dame:'♕', tour:'♖', fou:'♗', cheval:'♘' };
