@@ -38,9 +38,7 @@
         /* ── Plateaux ── */
         .board-wrap {
             position: relative;
-  display: block; /* ou block selon ton layout */
-/*            display: flex;
-            flex-direction: column;*/
+		display: block; /* ou block selon ton layout */
         }
 
         .board {
@@ -53,8 +51,7 @@
         }
 
         #target-board {
-            border-color: #2c3e50;
-            cursor: default;
+            border-color: #2c3e50; cursor: default;
         }
         #target-board.active {
             cursor: pointer;
@@ -90,33 +87,6 @@
             pointer-events: none;
         }
 
-
-        /* ── Labels ── */
-        .board-label2 {
-            font-weight: bold;
-            font-size: clamp(13px, 3.5vw, 17px);
-            text-transform: uppercase;
-            text-transform: uppercase;ml-4 
-            letter-spacing: 0.06em;
-            padding: 3px 0;
-
-  position: absolute;
-  right: 100%; 
-  /*margin-right: 10px; 
-  left: -45px;         /* ajuste selon ton visuel */
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: center;
-  white-space: nowrap; /* évite retour à la ligne */
-
-        }
-        #label-source {
-            color: #2c3e50;
-        }
-        #label-target {
-            color: #2c3e50;
-        }
-
         .board-label {
             font-weight: bold;
             font-size: clamp(13px, 3.5vw, 17px);
@@ -133,31 +103,6 @@
         }
 
 
-		board-label
-
-        /* ── Labels ── */
-        .board-label1 {
-            font-weight: bold;
-            font-size: clamp(13px, 3.5vw, 17px);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 3px 0;
-
-  position: absolute;
-  left: -84px;         /* ajuste selon ton visuel */
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: center;
-  white-space: nowrap; /* évite retour à la ligne */
-
-        }
-        #label-source {
-            color: #2c3e50;
-        }
-        #label-target {
-            color: #2c3e50;
-        }
-
         /* ── Bande centrale ── */
         .middle {
             display: flex;
@@ -165,11 +110,12 @@
             justify-content: center;
             width: 100%;
             padding: 0 4px;
-            gap: 8px;
-		margin: 10px;
+            gap: 5px;
+		margin: 5px;
         }
 
         #action-btn {
+		width: min(28vw, 15vh);          
             flex-shrink: 0;
             padding: 10px 24px;
             font-size: clamp(15px, 4.5vw, 20px);
